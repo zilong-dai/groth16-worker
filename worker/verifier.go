@@ -4,19 +4,27 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"time"
 
 	"github.com/cf/gnark-plonky2-verifier/types"
 	"github.com/cf/gnark-plonky2-verifier/variables"
 	"github.com/cf/gnark-plonky2-verifier/verifier"
 	"github.com/consensys/gnark-crypto/ecc"
 	"github.com/consensys/gnark/backend/groth16"
+	"github.com/consensys/gnark/backend/witness"
 	"github.com/consensys/gnark/frontend"
 	"github.com/consensys/gnark/frontend/cs/r1cs"
 )
 
-func NewGroth16Verifier(Path string) (*Groth16Verifier, error) {
-	return &Groth16Verifier{Path: Path}, nil
+func NewGroth16Verifier(Path string, curveId ecc.ID) (*Groth16Verifier, error) {
+	vk := groth16.NewVerifyingKey(curveId)
+
+	proof := groth16.NewProof(curveId)
+
+	publicWitness, err := witness.New(curveId.ScalarField())
+	if err != nil {
+		return nil, fmt.Errorf("error creating public witness: %w", err)
+	}
+	return &Groth16Verifier{Path: Path, Vk: vk, Proof: proof, PublicWitness: publicWitness}, nil
 }
 
 func (w *Groth16Verifier) CheckPath() error {
@@ -62,8 +70,6 @@ func (w *Groth16Verifier) Setup() error {
 	if err != nil {
 		return fmt.Errorf("failed to compile circuit: %w", err)
 	}
-
-	fmt.Println("Running circuit setup", time.Now())
 
 	var errSetup error
 
@@ -154,6 +160,43 @@ func (w *Groth16Verifier) WriteProof(keyPath string) error {
 	defer fVK.Close()
 
 	if _, err := w.Proof.WriteTo(fVK); err != nil {
+		return fmt.Errorf("failed to write proof to file: %w", err)
+	}
+
+	return nil
+}
+
+func (w *Groth16Verifier) ReadPublicInputs(inputPath string) error {
+	if w.PublicWitness == nil {
+		return fmt.Errorf("public inputs is not initialized")
+	}
+
+	publicinputsFile, err := os.Open(inputPath)
+	if err != nil {
+		return fmt.Errorf("failed to open public inputs file: %w", err)
+	}
+	defer publicinputsFile.Close()
+
+	_, err = w.PublicWitness.ReadFrom(publicinputsFile)
+	if err != nil {
+		return fmt.Errorf("failed to read public inputs: %w", err)
+	}
+
+	return nil
+}
+
+func (w *Groth16Verifier) WritePublicInputs(inputPath string) error {
+	if w.PublicWitness == nil {
+		return fmt.Errorf("public inputs is not initialized")
+	}
+
+	publicinputsFile, err := os.Create(inputPath)
+	if err != nil {
+		return fmt.Errorf("failed to create file: %w", err)
+	}
+	defer publicinputsFile.Close()
+
+	if _, err := w.PublicWitness.WriteTo(publicinputsFile); err != nil {
 		return fmt.Errorf("failed to write proof to file: %w", err)
 	}
 
