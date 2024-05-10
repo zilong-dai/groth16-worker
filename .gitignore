@@ -16,4 +16,7 @@
 
 # Output from aztec ignition
 data/
-testdata/
+testdata/*.bin
+*.bin
+target/
+Cargo.lock
