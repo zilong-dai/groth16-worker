@@ -23,8 +23,8 @@ fn main(){
 }
 ```
 
-cargo.toml
+Cargo.toml
 ```txt
 [dependencies]
-groth16-worker = {path = "https://github.com/zilong-dai/groth16-worker", branch = "dev"}
+groth16-worker = {git = "https://github.com/zilong-dai/groth16-worker", branch = "dev"}
 ```
