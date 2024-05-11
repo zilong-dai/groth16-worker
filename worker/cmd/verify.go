@@ -1,10 +1,10 @@
 package cmd
 
 import (
+	"github.com/zilong-dai/gorth16-worker/utils"
+
 	"github.com/consensys/gnark/backend/groth16"
 	"github.com/spf13/cobra"
-	// "github.com/succinctlabs/sp1-recursion-gnark/sp1"
-	// "github.com/succinctlabs/sp1-recursion-gnark/sp1/babybear"
 )
 
 var verifyCmdDataDir string
@@ -22,19 +22,19 @@ var verifyCmd = &cobra.Command{
 		}
 
 		// Read the proof.
-		proof, err := ReadProof(CURVE_ID, verifyCmdDataDir+"/"+PROOF_PATH)
+		proof, err := utils.ReadProof(CURVE_ID, verifyCmdDataDir+"/"+PROOF_PATH)
 		if err != nil {
 			panic(err)
 		}
 
 		// Read the verifier key.
-		vk, err := ReadVerifyingKey(CURVE_ID, verifyCmdDataDir+"/"+VK_PATH)
+		vk, err := utils.ReadVerifyingKey(CURVE_ID, verifyCmdDataDir+"/"+VK_PATH)
 		if err != nil {
 			panic(err)
 		}
 
 		// Read the public witness.
-		publicWitness, err := ReadPublicInputs(CURVE_ID, verifyCmdDataDir+"/"+WITNESS_PATH)
+		publicWitness, err := utils.ReadPublicInputs(CURVE_ID, verifyCmdDataDir+"/"+WITNESS_PATH)
 		if err != nil {
 			panic(err)
 		}

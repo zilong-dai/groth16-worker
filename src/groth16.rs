@@ -6,6 +6,7 @@ use std::{
 };
 
 pub (crate)const WORKER_PATH : &str = "./worker";
+pub (crate)const EXE_PATH: &str = "./bin/local_worker.go";
 /// A prover that can generate proofs with the Groth16 protocol using bindings to Gnark.
 #[derive(Debug, Clone)]
 pub struct Groth16Prover;
@@ -68,7 +69,7 @@ impl Groth16Prover {
     /// Runs the FFI command to interface with the Gnark library. Command is one of the commands
     /// defined in recursion/gnark/main.go.
     fn run_cmd(gnark_dir: &PathBuf, command: String, args: Vec<String>) {
-        let mut command_args = vec!["run".to_string(), "bin/main.go".to_string(), command.clone()];
+        let mut command_args = vec!["run".to_string(), EXE_PATH.to_string(), command.clone()];
 
         command_args.extend(args);
 

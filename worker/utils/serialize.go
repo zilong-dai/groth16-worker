@@ -1,6 +1,8 @@
-package cmd
+package utils
 
 import (
+	"crypto/md5"
+	"encoding/hex"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -10,12 +12,6 @@ import (
 	"github.com/consensys/gnark/backend/witness"
 	"github.com/consensys/gnark/constraint"
 )
-
-// type Groth16Proof struct {
-// 	PublicInputs [2]string `json:"public_inputs"`
-// 	EncodedProof string    `json:"encoded_proof"`
-// 	RawProof     string    `json:"raw_proof"`
-// }
 
 func WriteProof(proof groth16.Proof, path string) error {
 	if proof == nil {
@@ -218,4 +214,61 @@ func WriteCircuit(r1cs constraint.ConstraintSystem, path string) error {
 	}
 
 	return nil
+}
+
+func CheckKeysExist(path string) bool {
+	files := []string{
+		CIRCUIT_PATH,
+		VK_PATH,
+		PK_PATH,
+	}
+
+	for _, file := range files {
+		path := filepath.Join(path, file)
+		if _, err := os.Stat(path); err != nil {
+			if os.IsNotExist(err) {
+				return false
+			} else {
+				return false
+			}
+		}
+	}
+
+	return true
+}
+
+func CheckVKeysExist(path string) bool {
+
+	path = filepath.Join(path, VK_PATH)
+	if _, err := os.Stat(path); err != nil {
+		if os.IsNotExist(err) {
+			return false
+		} else {
+			return false
+		}
+	}
+
+	return true
+}
+
+func GetPlonky2PathMD5(path string) (string, error) {
+	hashes := make([]byte, 0)
+	files := []string{
+		COMMON_CIRCUIT_DATA_FILE,
+		PROOF_WITH_PUBLIC_INPUTS_FILE,
+		VERIFIER_ONLY_CIRCUIT_DATA_FILE,
+	}
+
+	for _, file := range files {
+		pathToFile := filepath.Join(path, file)
+		fileContents, err := os.ReadFile(pathToFile)
+		if err != nil {
+			return "", fmt.Errorf("%s does not exist: %w", pathToFile, err)
+		}
+
+		hash := md5.Sum(fileContents)
+		hashes = append(hashes, hash[:]...)
+	}
+
+	return hex.EncodeToString(hashes), nil
 }

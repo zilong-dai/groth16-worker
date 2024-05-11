@@ -10,8 +10,7 @@ import (
 	"github.com/succinctlabs/gnark-plonky2-verifier/types"
 	"github.com/succinctlabs/gnark-plonky2-verifier/variables"
 	"github.com/succinctlabs/gnark-plonky2-verifier/verifier"
-	// "github.com/spf13/cobra"
-	// "github.com/succinctlabs/sp1-recursion-gnark/sp1"
+	"github.com/zilong-dai/gorth16-worker/utils"
 )
 
 var buildCmdDataDir string
@@ -29,7 +28,7 @@ var buildCmd = &cobra.Command{
 		}
 
 		// Read the file.
-		if err := CheckPlonky2Path(buildCmdDataDir); err != nil {
+		if err := utils.CheckPlonky2Path(buildCmdDataDir); err != nil {
 			panic("plonky2 data is missing")
 		}
 		commonCircuitData := types.ReadCommonCircuitData(filepath.Join(buildCmdDataDir, COMMON_CIRCUIT_DATA_FILE))
@@ -56,17 +55,17 @@ var buildCmd = &cobra.Command{
 		}
 
 		// Write the R1CS.
-		if err := WriteCircuit(r1cs, buildCmdDataDir+"/"+CIRCUIT_PATH); err != nil {
+		if err := utils.WriteCircuit(r1cs, buildCmdDataDir+"/"+CIRCUIT_PATH); err != nil {
 			panic(err)
 		}
 
 		// Write the verifier key.
-		if err := WriteVerifyingKey(vk, buildCmdDataDir+"/"+VK_PATH); err != nil {
+		if err := utils.WriteVerifyingKey(vk, buildCmdDataDir+"/"+VK_PATH); err != nil {
 			panic(err)
 		}
 
 		// Write the proving key.
-		if err := WriteProvingKey(pk, buildCmdDataDir+"/"+PK_PATH); err != nil {
+		if err := utils.WriteProvingKey(pk, buildCmdDataDir+"/"+PK_PATH); err != nil {
 			panic(err)
 		}
 	},

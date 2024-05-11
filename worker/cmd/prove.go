@@ -9,6 +9,7 @@ import (
 	"github.com/succinctlabs/gnark-plonky2-verifier/types"
 	"github.com/succinctlabs/gnark-plonky2-verifier/variables"
 	"github.com/succinctlabs/gnark-plonky2-verifier/verifier"
+	"github.com/zilong-dai/gorth16-worker/utils"
 )
 
 var proveCmdDataDir string
@@ -26,25 +27,25 @@ var proveCmd = &cobra.Command{
 		}
 
 		// Read the R1CS.
-		r1cs, err := ReadCircuit(CURVE_ID, proveCmdDataDir+"/"+CIRCUIT_PATH)
+		r1cs, err := utils.ReadCircuit(CURVE_ID, proveCmdDataDir+"/"+CIRCUIT_PATH)
 		if err != nil {
 			panic(err)
 		}
 
 		// Read the proving key.
-		pk, err := ReadProvingKey(CURVE_ID, proveCmdDataDir+"/"+PK_PATH)
+		pk, err := utils.ReadProvingKey(CURVE_ID, proveCmdDataDir+"/"+PK_PATH)
 		if err != nil {
 			panic(err)
 		}
 
 		// Read the verifier key.
-		vk, err := ReadVerifyingKey(CURVE_ID, proveCmdDataDir+"/"+VK_PATH)
+		vk, err := utils.ReadVerifyingKey(CURVE_ID, proveCmdDataDir+"/"+VK_PATH)
 		if err != nil {
 			panic(err)
 		}
 
 		// Read the file.
-		if err := CheckPlonky2Path(proveCmdDataDir); err != nil {
+		if err := utils.CheckPlonky2Path(proveCmdDataDir); err != nil {
 			panic("plonky2 data is missing")
 		}
 		// commonCircuitData := types.ReadCommonCircuitData(filepath.Join(proveCmdDataDir, COMMON_CIRCUIT_DATA_FILE))
@@ -78,11 +79,11 @@ var proveCmd = &cobra.Command{
 		}
 
 		// Serialize the proof to a file.
-		if err := WriteProof(proof, proveCmdDataDir+"/"+PROOF_PATH); err != nil {
+		if err := utils.WriteProof(proof, proveCmdDataDir+"/"+PROOF_PATH); err != nil {
 			panic(err)
 		}
 
-		if err := WritePublicInputs(publicWitness, proveCmdDataDir+"/"+WITNESS_PATH); err != nil {
+		if err := utils.WritePublicInputs(publicWitness, proveCmdDataDir+"/"+WITNESS_PATH); err != nil {
 			panic(err)
 		}
 	},

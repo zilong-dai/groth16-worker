@@ -6,21 +6,20 @@ import (
 
 	"github.com/consensys/gnark-crypto/ecc"
 	"github.com/spf13/cobra"
+	"github.com/zilong-dai/gorth16-worker/utils"
 )
 
-// var CONSTRAINTS_JSON_FILE string = "constraints_groth16.json"
-var COMMON_CIRCUIT_DATA_FILE = "common_circuit_data.json"
-var PROOF_WITH_PUBLIC_INPUTS_FILE = "proof_with_public_inputs.json"
-var VERIFIER_ONLY_CIRCUIT_DATA_FILE = "verifier_only_circuit_data.json"
+var COMMON_CIRCUIT_DATA_FILE = utils.COMMON_CIRCUIT_DATA_FILE
+var PROOF_WITH_PUBLIC_INPUTS_FILE = utils.PROOF_WITH_PUBLIC_INPUTS_FILE
+var VERIFIER_ONLY_CIRCUIT_DATA_FILE = utils.VERIFIER_ONLY_CIRCUIT_DATA_FILE
 
-// var VERIFIER_CONTRACT_PATH string = "SP1Verifier.sol"
-var CIRCUIT_PATH string = "circuit_groth16.bin"
-var VK_PATH string = "vk_groth16.bin"
-var PK_PATH string = "pk_groth16.bin"
-var PROOF_PATH string = "proof_groth16.bin"
-var WITNESS_PATH string = "witness_groth16.bin"
+var CIRCUIT_PATH string = utils.CIRCUIT_PATH
+var VK_PATH string = utils.VK_PATH
+var PK_PATH string = utils.PK_PATH
+var PROOF_PATH string = utils.PROOF_PATH
+var WITNESS_PATH string = utils.WITNESS_PATH
 
-var CURVE_ID ecc.ID = ecc.BN254
+var CURVE_ID ecc.ID = utils.CURVE_ID
 
 var cmd = &cobra.Command{
 	Use: "groth16-worker",
