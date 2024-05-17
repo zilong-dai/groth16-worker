@@ -8,13 +8,13 @@ import (
 	"math/big"
 
 	curve "github.com/consensys/gnark-crypto/ecc/bls12-381"
-	"github.com/consensys/gnark/backend/groth16"
-	bls12381 "github.com/consensys/gnark/backend/groth16/bls12-381"
-	"github.com/consensys/gnark/frontend"
-	"github.com/consensys/gnark/frontend/cs/r1cs"
-	"github.com/succinctlabs/gnark-plonky2-verifier/plonk/gates"
-	"github.com/succinctlabs/gnark-plonky2-verifier/types"
-	"github.com/succinctlabs/gnark-plonky2-verifier/variables"
+	"github.com/zilong-dai/gnark-plonky2-verifier/plonk/gates"
+	"github.com/zilong-dai/gnark-plonky2-verifier/types"
+	"github.com/zilong-dai/gnark-plonky2-verifier/variables"
+	"github.com/zilong-dai/gnark/backend/groth16"
+	bls12381 "github.com/zilong-dai/gnark/backend/groth16/bls12-381"
+	"github.com/zilong-dai/gnark/frontend"
+	"github.com/zilong-dai/gnark/frontend/cs/r1cs"
 	"github.com/zilong-dai/gorth16-worker/utils"
 )
 
@@ -61,33 +61,33 @@ func (w *Groth16Prover) Build(common_circuit_data string, proof_with_public_inpu
 		CommonCircuitData:       commonCircuitData,
 	}
 
-	r1cs, err := frontend.Compile(w.curveId.ScalarField(), r1cs.NewBuilder, &circuit)
+	w.r1cs, err = frontend.Compile(w.curveId.ScalarField(), r1cs.NewBuilder, &circuit)
 	if err != nil {
 		fmt.Println("failed to compile r1cs: %v", err)
 		return "false"
 	}
 
 	// Perform the trusted setup.
-	pk, vk, err := groth16.Setup(r1cs)
+	w.pk, w.vk, err = groth16.Setup(w.r1cs)
 	if err != nil {
 		fmt.Println("failed to perform trusted setup: %v", err)
 		return "false"
 	}
 
 	// Write the R1CS.
-	if err := utils.WriteCircuit(r1cs, KEY_STORE_PATH+"/"+CIRCUIT_FILE); err != nil {
+	if err := utils.WriteCircuit(w.r1cs, KEY_STORE_PATH+"/"+CIRCUIT_FILE); err != nil {
 		fmt.Println("failed to write r1cs to %s: %v", KEY_STORE_PATH+"/"+CIRCUIT_FILE, err)
 		return "false"
 	}
 
 	// Write the verifier key.
-	if err := utils.WriteVerifyingKey(vk, KEY_STORE_PATH+"/"+VK_FILE); err != nil {
+	if err := utils.WriteVerifyingKey(w.vk, KEY_STORE_PATH+"/"+VK_FILE); err != nil {
 		fmt.Println("failed to write verifier key to %s: %v", KEY_STORE_PATH+"/"+VK_FILE, err)
 		return "false"
 	}
 
 	// Write the proving key.
-	if err := utils.WriteProvingKey(pk, KEY_STORE_PATH+"/"+PK_FILE); err != nil {
+	if err := utils.WriteProvingKey(w.pk, KEY_STORE_PATH+"/"+PK_FILE); err != nil {
 		fmt.Println("failed to write proving key to %s: %v", KEY_STORE_PATH+"/"+PK_FILE, err)
 		return "false"
 

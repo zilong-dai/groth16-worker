@@ -3,8 +3,8 @@ package cmd
 import (
 	"github.com/zilong-dai/gorth16-worker/utils"
 
-	"github.com/consensys/gnark/backend/groth16"
 	"github.com/spf13/cobra"
+	"github.com/zilong-dai/gnark/backend/groth16"
 )
 
 var verifyCmdDataDir string

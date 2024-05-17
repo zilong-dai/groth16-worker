@@ -1,14 +1,14 @@
 package cmd
 
 import (
+	"math/big"
 	"path/filepath"
 
-	"github.com/consensys/gnark/backend/groth16"
-	"github.com/consensys/gnark/frontend"
 	"github.com/spf13/cobra"
-	"github.com/succinctlabs/gnark-plonky2-verifier/types"
-	"github.com/succinctlabs/gnark-plonky2-verifier/variables"
-	"github.com/succinctlabs/gnark-plonky2-verifier/verifier"
+	"github.com/zilong-dai/gnark-plonky2-verifier/types"
+	"github.com/zilong-dai/gnark-plonky2-verifier/variables"
+	"github.com/zilong-dai/gnark/backend/groth16"
+	"github.com/zilong-dai/gnark/frontend"
 	"github.com/zilong-dai/gorth16-worker/utils"
 )
 
@@ -48,13 +48,31 @@ var proveCmd = &cobra.Command{
 		if err := utils.CheckPlonky2Path(proveCmdDataDir); err != nil {
 			panic("plonky2 data is missing")
 		}
-		// commonCircuitData := types.ReadCommonCircuitData(filepath.Join(proveCmdDataDir, COMMON_CIRCUIT_DATA_FILE))
-		proofWithPis := variables.DeserializeProofWithPublicInputs(types.ReadProofWithPublicInputs(filepath.Join(proveCmdDataDir, PROOF_WITH_PUBLIC_INPUTS_FILE)))
-		verifierOnlyCircuitData := variables.DeserializeVerifierOnlyCircuitData(types.ReadVerifierOnlyCircuitData(filepath.Join(proveCmdDataDir, VERIFIER_ONLY_CIRCUIT_DATA_FILE)))
 
-		assignment := verifier.ExampleVerifierCircuit{
+		verifierOnlyCircuitData := variables.DeserializeVerifierOnlyCircuitData(types.ReadVerifierOnlyCircuitData(filepath.Join(buildCmdDataDir, VERIFIER_ONLY_CIRCUIT_DATA_FILE)))
+
+		rawProofWithPis := types.ReadProofWithPublicInputs(filepath.Join(buildCmdDataDir, PROOF_WITH_PUBLIC_INPUTS_FILE))
+		proofWithPis := variables.DeserializeProofWithPublicInputs(rawProofWithPis)
+
+		two_to_63 := new(big.Int).SetUint64(1 << 63)
+
+		blockStateHashAcc := big.NewInt(0)
+		sighashAcc := big.NewInt(0)
+		for i := 3; i >= 0; i-- {
+			blockStateHashAcc = new(big.Int).Mul(blockStateHashAcc, two_to_63)
+			blockStateHashAcc = new(big.Int).Add(blockStateHashAcc, new(big.Int).SetUint64(rawProofWithPis.PublicInputs[i]))
+		}
+		for i := 7; i >= 4; i-- {
+			sighashAcc = new(big.Int).Mul(sighashAcc, two_to_63)
+			sighashAcc = new(big.Int).Add(sighashAcc, new(big.Int).SetUint64(rawProofWithPis.PublicInputs[i]))
+		}
+		blockStateHash := frontend.Variable(blockStateHashAcc)
+		sighash := frontend.Variable(sighashAcc)
+
+		assignment := utils.CRVerifierCircuit{
+			PublicInputs:            []frontend.Variable{blockStateHash, sighash},
 			Proof:                   proofWithPis.Proof,
-			PublicInputs:            proofWithPis.PublicInputs,
+			OriginalPublicInputs:    proofWithPis.PublicInputs,
 			VerifierOnlyCircuitData: verifierOnlyCircuitData,
 		}
 		witness, err := frontend.NewWitness(&assignment, CURVE_ID.ScalarField())

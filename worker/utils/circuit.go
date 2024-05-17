@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"math/big"
 
-	"github.com/consensys/gnark/frontend"
-	gl "github.com/succinctlabs/gnark-plonky2-verifier/goldilocks"
-	"github.com/succinctlabs/gnark-plonky2-verifier/types"
-	"github.com/succinctlabs/gnark-plonky2-verifier/variables"
-	"github.com/succinctlabs/gnark-plonky2-verifier/verifier"
+	gl "github.com/zilong-dai/gnark-plonky2-verifier/goldilocks"
+	"github.com/zilong-dai/gnark-plonky2-verifier/types"
+	"github.com/zilong-dai/gnark-plonky2-verifier/variables"
+	"github.com/zilong-dai/gnark-plonky2-verifier/verifier"
+	"github.com/zilong-dai/gnark/frontend"
 )
 
 type CRVerifierCircuit struct {

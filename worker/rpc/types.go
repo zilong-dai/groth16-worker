@@ -6,9 +6,9 @@ import (
 	"path/filepath"
 
 	"github.com/consensys/gnark-crypto/ecc"
-	"github.com/consensys/gnark/backend/groth16"
-	"github.com/consensys/gnark/backend/witness"
-	"github.com/consensys/gnark/constraint"
+	"github.com/zilong-dai/gnark/backend/groth16"
+	"github.com/zilong-dai/gnark/backend/witness"
+	"github.com/zilong-dai/gnark/constraint"
 	"github.com/zilong-dai/gorth16-worker/utils"
 )
 
