@@ -27,19 +27,19 @@ func (c *CRVerifierCircuit) Define(api frontend.API) error {
 	if len(c.PublicInputs) != 2 {
 		panic("invalid public inputs, should contain 2 BLS12_381 elements")
 	}
-	if len(c.OriginalPublicInputs) != 8 {
-		panic("invalid original public inputs, should contain 8 goldilocks elements")
+	if len(c.OriginalPublicInputs) != 512 {
+		panic("invalid original public inputs, should contain 512 goldilocks elements")
 	}
 
-	two_to_63 := new(big.Int).SetUint64(1 << 63)
+	two := big.NewInt(2)
 
 	blockStateHashAcc := frontend.Variable(0)
 	sighashAcc := frontend.Variable(0)
-	for i := 3; i >= 0; i-- {
-		blockStateHashAcc = api.MulAcc(c.OriginalPublicInputs[i].Limb, blockStateHashAcc, two_to_63)
+	for i := 255; i >= 0; i-- {
+		blockStateHashAcc = api.MulAcc(c.OriginalPublicInputs[i].Limb, blockStateHashAcc, two)
 	}
-	for i := 7; i >= 4; i-- {
-		sighashAcc = api.MulAcc(c.OriginalPublicInputs[i].Limb, sighashAcc, two_to_63)
+	for i := 511; i >= 256; i-- {
+		sighashAcc = api.MulAcc(c.OriginalPublicInputs[i].Limb, sighashAcc, two)
 	}
 
 	api.AssertIsEqual(c.PublicInputs[0], blockStateHashAcc)

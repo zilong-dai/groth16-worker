@@ -38,16 +38,16 @@ func (w *Groth16Prover) Build(common_circuit_data string, proof_with_public_inpu
 	}
 	proofWithPis := variables.DeserializeProofWithPublicInputs(rawProofWithPis)
 
-	two_to_63 := new(big.Int).SetUint64(1 << 63)
+	two := big.NewInt(2)
 
 	blockStateHashAcc := big.NewInt(0)
 	sighashAcc := big.NewInt(0)
-	for i := 3; i >= 0; i-- {
-		blockStateHashAcc = new(big.Int).Mul(blockStateHashAcc, two_to_63)
+	for i := 255; i >= 0; i-- {
+		blockStateHashAcc = new(big.Int).Mul(blockStateHashAcc, two)
 		blockStateHashAcc = new(big.Int).Add(blockStateHashAcc, new(big.Int).SetUint64(rawProofWithPis.PublicInputs[i]))
 	}
-	for i := 7; i >= 4; i-- {
-		sighashAcc = new(big.Int).Mul(sighashAcc, two_to_63)
+	for i := 511; i >= 256; i-- {
+		sighashAcc = new(big.Int).Mul(sighashAcc, two)
 		sighashAcc = new(big.Int).Add(sighashAcc, new(big.Int).SetUint64(rawProofWithPis.PublicInputs[i]))
 	}
 	blockStateHash := frontend.Variable(blockStateHashAcc)
@@ -116,16 +116,16 @@ func (w *Groth16Prover) GenerateProof(common_circuit_data string, proof_with_pub
 	}
 	proofWithPis := variables.DeserializeProofWithPublicInputs(rawProofWithPis)
 
-	two_to_63 := new(big.Int).SetUint64(1 << 63)
+	two := big.NewInt(2)
 
 	blockStateHashAcc := big.NewInt(0)
 	sighashAcc := big.NewInt(0)
-	for i := 3; i >= 0; i-- {
-		blockStateHashAcc = new(big.Int).Mul(blockStateHashAcc, two_to_63)
+	for i := 255; i >= 0; i-- {
+		blockStateHashAcc = new(big.Int).Mul(blockStateHashAcc, two)
 		blockStateHashAcc = new(big.Int).Add(blockStateHashAcc, new(big.Int).SetUint64(rawProofWithPis.PublicInputs[i]))
 	}
-	for i := 7; i >= 4; i-- {
-		sighashAcc = new(big.Int).Mul(sighashAcc, two_to_63)
+	for i := 511; i >= 256; i-- {
+		sighashAcc = new(big.Int).Mul(sighashAcc, two)
 		sighashAcc = new(big.Int).Add(sighashAcc, new(big.Int).SetUint64(rawProofWithPis.PublicInputs[i]))
 	}
 	blockStateHash := frontend.Variable(blockStateHashAcc)
