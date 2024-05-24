@@ -93,6 +93,18 @@ func (w *Groth16Prover) Build(common_circuit_data string, proof_with_public_inpu
 
 	}
 
+	g16VK := G16VerifyingKey{
+		VK: w.vk,
+	}
+
+	jsonData, err := json.Marshal(g16VK)
+	if err != nil {
+		fmt.Println("failed to marshal g16VK to json: %v", err)
+		return "false"
+	}
+
+	fmt.Println(string(jsonData))
+
 	return "true"
 }
 
@@ -188,6 +200,21 @@ func (w *Groth16Prover) GenerateProof(common_circuit_data string, proof_with_pub
 		fmt.Println("failed to Marshal G16ProofWithPublicInputs: %v", err)
 		return "false"
 	}
+
+	// blsProof := proof.(*groth16_bls12381.Proof)
+	// blsWitness := publicWitness.Vector().(fr.Vector)
+
+	// proof_city, err := ToJsonCityProof(blsProof, blsWitness)
+	// if err != nil {
+	// 	fmt.Println("failed to Marshal proof: %v", err)
+	// 	return "false"
+	// }
+
+	// proof_bytes, err := json.Marshal(&proof_city)
+	// if err != nil {
+	// 	fmt.Println("failed to Marshal proof: %v", err)
+	// 	return "false"
+	// }
 
 	return string(proof_bytes)
 }

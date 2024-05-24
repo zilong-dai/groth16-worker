@@ -47,6 +47,7 @@ type Groth16Prover struct {
 	r1cs    constraint.ConstraintSystem
 	md5     string
 	curveId ecc.ID
+	IsSetup bool
 }
 
 func NewProver(curveId ecc.ID) (*Groth16Prover, error) {
@@ -66,6 +67,7 @@ func NewProver(curveId ecc.ID) (*Groth16Prover, error) {
 		r1cs:    r1cs,
 		md5:     "",
 		curveId: curveId,
+		IsSetup: false,
 	}
 	// w.init()
 	return &w, nil
